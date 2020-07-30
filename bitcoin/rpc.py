@@ -166,8 +166,14 @@ class BaseProxy(object):
             conf['rpcport'] = int(conf.get('rpcport', service_port))
             conf['rpchost'] = conf.get('rpcconnect', 'localhost')
 
+            # If a connection was specified, that should take precedence.
+            rpchost_override = connection.host if connection else None
+            rpcport_override = connection.port if connection else None
+
             service_url = ('%s://%s:%d' %
-                ('http', conf['rpchost'], conf['rpcport']))
+                ('http',
+                 rpchost_override or conf['rpchost'],
+                 rpcport_override or conf['rpcport']))
 
             cookie_dir = conf.get('datadir', os.path.dirname(btc_conf_file))
             if bitcoin.params.NAME != "mainnet":
